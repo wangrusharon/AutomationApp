@@ -1,0 +1,59 @@
+
+<div  class="col-md-4">
+  <div class="nav-side-menu"> 
+      <div class="brand">Categories</div>
+      <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
+      <div class="menu-list">          
+          <ul id="menu-content" class="menu-content collapse out" *ngFor="let rootCategory of Categories" >
+               <li>
+                  <a href="#" (click)="setCategoryValue(rootCategory.name)"  data-toggle="collapse" [attr.data-target]="'#' +rootCategory.shortName"   ng-class="{collapsed active: 'rootCategory.subCategory.length > 0'}" >
+                      <i class="fa fa-dashboard fa-lg"></i> {{rootCategory.name}}
+                      <span class="arrow" *ngIf="rootCategory.subCategory.length > 0"></span>
+                  </a>              
+                        
+               <ul id="{{rootCategory.shortName}}" class="sub-menu collapse"> 
+                <li *ngFor="let subCategory of rootCategory.subCategory" >
+                    <a href="#" (click)="setCategoryValue(subCategory.name)" data-toggle="collapse" [attr.data-target]="'#' +subCategory.shortName" ng-class="{collapsed active: 'subCategory.subCategory.length > 0'}" >
+                        <i class="fa fa-dashboard fa-lg"></i> {{subCategory.name}}
+                        <span class="arrow" *ngIf="subCategory.subCategory.length > 0"></span>
+                    </a> 
+                  <ul *ngIf="subCategory.subCategory.length > 0" id="{{subCategory.shortName}}" class="sub-menu collapse">
+                    <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: subCategory.subCategory }"></ng-container>
+                  </ul>
+                </li>
+              </ul> 
+
+              <ng-template #recursiveList let-list>
+               <li *ngFor="let subCategory of list" >
+                  <a href="#" (click)="setCategoryValue(subCategory.name)"  data-toggle="collapse" [attr.data-target]="'#' +subCategory.shortName" ng-class="{collapsed active: 'subCategory.subCategory.length > 0'}" >
+                      <i class="fa fa-dashboard fa-lg"></i> {{subCategory.name}}
+                      <span class="arrow" *ngIf="subCategory.subCategory.length > 0"></span>
+                  </a> 
+                <ul *ngIf="subCategory.subCategory.length > 0" id="{{subCategory.shortName}}" class="sub-menu collapse">
+                  <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: subCategory.subCategory }"></ng-container>
+                </ul>
+              </li>
+            </ng-template>
+              
+                          
+          </li> 
+          </ul>
+      </div>
+  </div>
+</div>
+ <div class="col-md-8">
+  <div class="photon_content_heading">{{userFilter.parent}} Home</div>
+  <div class="photon_content_body">
+   <ul class="nav nav-tabs">
+     <li *ngFor="let f of Files | filterBy:userFilter,let i=index" [ngClass]="{'active':i === 0}" ng-class="{'active': 'i===0'}">
+        <a data-toggle="tab" href="#{{f.shortName}}">{{f.shortName}}</a>
+     </li>
+   </ul>
+   <div class="tab-content" >
+     <div *ngFor="let f of Files | filterBy:userFilter, let i=index" id={{f.shortName}}  [ngClass]="{'tab-pane fade in active': 'i===0'}" class="tab-pane fade">
+        <markdown [data]=f.content>    
+       </markdown>
+     </div>
+   </div>
+  </div>
+ </div>
